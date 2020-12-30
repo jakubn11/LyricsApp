@@ -68,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Intent imagePick = new Intent(Intent.ACTION_PICK);
                 imagePick.setType("image/*");
                 startActivityForResult(imagePick, SELECT_PHOTO);
+                
 
 
     }

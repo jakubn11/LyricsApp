@@ -13,9 +13,6 @@ public class Uzivatel {
         this.profilovka = profilovka;
     }
 
-    public Uzivatel() {
-    }
-
     public String getPrezdivka() {
         return prezdivka;
     }
