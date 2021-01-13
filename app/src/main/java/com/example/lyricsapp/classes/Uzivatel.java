@@ -1,4 +1,4 @@
-package com.example.lyricsapp;
+package com.example.lyricsapp.classes;
 
 public class Uzivatel {
     private String prezdivka;
@@ -11,6 +11,9 @@ public class Uzivatel {
         this.email = email;
         this.heslo = heslo;
         this.profilovka = profilovka;
+    }
+
+    public Uzivatel() {
     }
 
     public String getPrezdivka() {

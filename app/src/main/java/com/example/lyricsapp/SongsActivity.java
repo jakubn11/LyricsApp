@@ -3,30 +3,36 @@ package com.example.lyricsapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.lyricsapp.database.DatabaseHelper;
 
-import java.io.IOException;
+import java.util.List;
 
 public class SongsActivity extends AppCompatActivity {
-    private TextView testTextView;
-    private DatabaseHelper myDbHelper;
+    private ListView listView;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_songs);
-        this.testTextView = findViewById(R.id.testTextView);
+        this.listView = findViewById(R.id.ListView1);
 
-        myDbHelper = new DatabaseHelper(this);
-        myDbHelper.createDataBase();
-        myDbHelper.openDataBase();
-
-        String text = myDbHelper.getUserNameFromDB();
-        testTextView.setText(text);
-
-        myDbHelper.close();
-
+        databaseHelper = new DatabaseHelper(this);
+        //databaseHelper.copyDataBase("/data/data/com.example.lyricsapp/databases/Lyrics.db");
     }
+
+    /*private List<Uzivatel> getData() {
+        databaseHelper.openDataBase();
+        List<Uzivatel> list = databaseHelper.getData();
+        databaseHelper.close();
+        return list;
+    }*/
+
+    /*private void addList() {
+        this.list = getData();
+    }*/
 }
