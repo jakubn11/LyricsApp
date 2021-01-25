@@ -5,12 +5,4 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SongsActivity">
-
-    <ListView
-        android:id="@+id/ListView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="125dp"
-        tools:layout_editor_absoluteY="156dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    tools:context=".SongsActivity"/>

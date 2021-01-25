@@ -5,10 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 
 
 import com.example.lyricsapp.classes.Uzivatel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -125,5 +129,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("profilovka", uzivatel.getProfilovka());
         values.put("heslo", uzivatel.getHeslo());
         myDataBase.insert("uzivatel", null, values);
+    }
+
+    public void updateUzivatel(Uzivatel uzivatel, Uzivatel newUzivatel) {
+        ContentValues values = new ContentValues();
+        values.put("prezdivka", newUzivatel.getPrezdivka());
+        values.put("email", newUzivatel.getEmail());
+        values.put("heslo", newUzivatel.getHeslo());
+//        values.put("prezdivka", newUzivatel.getProfilovka());
+        myDataBase.update("uzivatel", values, "prezdivka = ?", new String[]{uzivatel.getPrezdivka()});
     }
 }

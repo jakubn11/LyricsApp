@@ -4,13 +4,12 @@ public class Uzivatel {
     private String prezdivka;
     private String email;
     private String heslo;
-    private String profilovka;
+    byte[] profilovka;
 
-    public Uzivatel(String prezdivka, String email, String heslo, String profilovka) {
+    public Uzivatel(String prezdivka, String email, String heslo) {
         this.prezdivka = prezdivka;
         this.email = email;
         this.heslo = heslo;
-        this.profilovka = profilovka;
     }
 
     public Uzivatel() {
@@ -40,11 +39,11 @@ public class Uzivatel {
         this.heslo = heslo;
     }
 
-    public String getProfilovka() {
+    public byte[] getProfilovka() {
         return profilovka;
     }
 
-    public void setProfilovka(String profilovka) {
+    public void setProfilovka(byte[] profilovka) {
         this.profilovka = profilovka;
     }
 }

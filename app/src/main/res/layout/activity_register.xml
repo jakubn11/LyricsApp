@@ -35,8 +35,8 @@
     <Button
         android:id="@+id/imagePickerRegisterBtn"
         android:layout_width="wrap_content"
-        android:onClick="selectImage"
         android:layout_height="wrap_content"
+        android:onClick="selectImage"
         android:text="Vyberte obrázek"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -139,22 +139,23 @@
 
     <Button
         android:id="@+id/registerBtn"
-        android:onClick="insertUzivatel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="insertUzivatel"
         android:text="Registrovat se"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordConfirmRegisterEditText" />
 
-    <TextView
-        android:id="@+id/imageName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageView
+        android:id="@+id/imageViewRegister"
+        android:layout_width="87dp"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/passwordRegisterEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imagePickerRegisterBtn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/emailRegisterEditText"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

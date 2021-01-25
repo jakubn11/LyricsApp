@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -67,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         if (!validateUsername() | !validatePassword()) {
             return;
         }
-
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.getReadableDatabase();
         String username = usernameLogin.getText().toString();
@@ -76,8 +76,9 @@ public class LoginActivity extends AppCompatActivity {
         Boolean exist = databaseHelper.checkUser(username, password);
         databaseHelper.close();
         if (exist) {
-            Toast.makeText(LoginActivity.this, username + " " + password, Toast.LENGTH_LONG).show();
-            Intent login = new Intent(getApplicationContext(), SongsActivity.class);
+//            Toast.makeText(LoginActivity.this, username + " " + password, Toast.LENGTH_LONG).show();
+            Intent login = new Intent(getApplicationContext(), ProfileActivity.class);
+            login.putExtra("username", username);
             startActivity(login);
             usernameLogin.getText().clear();
             passwordLogin.getText().clear();

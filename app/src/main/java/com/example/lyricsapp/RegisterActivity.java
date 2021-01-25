@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,15 +15,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lyricsapp.classes.Uzivatel;
 import com.example.lyricsapp.database.DatabaseHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class RegisterActivity extends AppCompatActivity {
     int SELECT_PHOTO= 1;
@@ -29,8 +35,8 @@ public class RegisterActivity extends AppCompatActivity {
     File f;
     private EditText usernameRegister, emailRegister, passwordRegister, passwordConfirmRegister;
     private Button imagePicker, registerBtn;
-    private TextView imageName;
     private DatabaseHelper databaseHelper;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
         passwordConfirmRegister = findViewById(R.id.passwordConfirmRegisterEditText);
         imagePicker = findViewById(R.id.imagePickerRegisterBtn);
         registerBtn = findViewById(R.id.registerBtn);
-        imageName = findViewById(R.id.imageName);
+        imageView = findViewById(R.id.imageViewRegister);
     }
 
     private Boolean validateUsername() {
@@ -68,9 +74,9 @@ public class RegisterActivity extends AppCompatActivity {
         String password = passwordRegister.getText().toString();
 
         String passwordValidation = "^" +
-                //"(?=.*[0-9])" +            //at least 1 digit
-                //"(?=.*[a-z])" +            //at least 1 lower case letter
-                //"(?=.*[A-Z])" +            //at least 1 upper case letter
+//                "(?=.*[0-9])" +              //at least 1 digit
+//                "(?=.*[a-z])" +              //at least 1 lower case letter
+//                "(?=.*[A-Z])" +              //at least 1 upper case letter
                 "(?=.*[a-zA-Z])" +           //any letter
                 "(?=.*[@#$%^&+=])" +         //at least 1 special character
                 "(?=\\S+$)" +                //no white spaces
@@ -124,9 +130,17 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    private Boolean validateImage() {
+        if (f == null) {
+            Toast.makeText(RegisterActivity.this, "Obrázek nebyl vybrán", Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     public void insertUzivatel(View v) {
-        if(!validateUsername() | !validateEmail() | !validatePassword() | !validateConfirmPassword())
+        if(!validateUsername() | !validateEmail() | !validatePassword() | !validateConfirmPassword() | !validateImage())
         {
             return;
         }
@@ -137,13 +151,21 @@ public class RegisterActivity extends AppCompatActivity {
         Uzivatel newUzivatel = new Uzivatel();
         newUzivatel.setPrezdivka(usernameRegister.getText().toString());
         newUzivatel.setEmail(emailRegister.getText().toString());
-        newUzivatel.setProfilovka(f.getPath());
+        newUzivatel.setProfilovka(imageViewToByte(imageView));
         newUzivatel.setHeslo(passwordRegister.getText().toString());
         databaseHelper.vlozeniUzivatele(newUzivatel);
         databaseHelper.close();
         Toast.makeText(RegisterActivity.this, "Vloženo", Toast.LENGTH_LONG).show();
         Intent login = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(login);
+    }
+
+    public static byte[] imageViewToByte(ImageView image) {
+        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
     }
 
     public void selectImage(View v) {
@@ -161,7 +183,9 @@ public class RegisterActivity extends AppCompatActivity {
              f = new File(path);
              Log.v("cesta k obrázku", f.getPath());
              try {
-                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                 InputStream inputstream = getContentResolver().openInputStream(uri);
+                 Bitmap bitmap = BitmapFactory.decodeStream(inputstream);
+                 imageView.setImageBitmap(bitmap);
                  Toast.makeText(this,"Profilová fotka vybrána", Toast.LENGTH_SHORT).show();
              } catch (FileNotFoundException e) {
                  e.printStackTrace();
