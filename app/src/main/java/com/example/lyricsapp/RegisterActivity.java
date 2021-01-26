@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity {
         newUzivatel.setEmail(emailRegister.getText().toString());
         newUzivatel.setProfilovka(imageViewToByte(imageView));
         newUzivatel.setHeslo(passwordRegister.getText().toString());
-        databaseHelper.vlozeniUzivatele(newUzivatel);
+        databaseHelper.insertUser(newUzivatel);
         databaseHelper.close();
         Toast.makeText(RegisterActivity.this, "Vloženo", Toast.LENGTH_LONG).show();
         Intent login = new Intent(getApplicationContext(), LoginActivity.class);

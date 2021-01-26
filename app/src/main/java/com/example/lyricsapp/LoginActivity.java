@@ -21,7 +21,7 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameLogin, passwordLogin;
-    private Button loginBtn, registerLink;
+    private Button loginButton, registerLink;
     private DatabaseHelper databaseHelper;
 
     @Override
@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
         this.usernameLogin = findViewById(R.id.usernameLoginEditText);
         this.passwordLogin = findViewById(R.id.passwordLoginEditText);
-        this.loginBtn = findViewById(R.id.loginBtn);
+        this.loginButton = findViewById(R.id.loginBtn);
         this.registerLink = findViewById(R.id.registerInLoginBtn);
     }
 
@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         if (!validateUsername() | !validatePassword()) {
             return;
         }
+
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.getReadableDatabase();
         String username = usernameLogin.getText().toString();
@@ -75,10 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         databaseHelper.openDataBase();
         Boolean exist = databaseHelper.checkUser(username, password);
         databaseHelper.close();
+
         if (exist) {
 //            Toast.makeText(LoginActivity.this, username + " " + password, Toast.LENGTH_LONG).show();
-            Intent login = new Intent(getApplicationContext(), ProfileActivity.class);
-            login.putExtra("username", username);
+            Intent login = new Intent(LoginActivity.this, ProfileActivity.class);
+            login.putExtra("USERNAME", username);
             startActivity(login);
             usernameLogin.getText().clear();
             passwordLogin.getText().clear();

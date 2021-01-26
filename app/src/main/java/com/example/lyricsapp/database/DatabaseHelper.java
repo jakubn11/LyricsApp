@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Log;
 
 
 import com.example.lyricsapp.classes.Uzivatel;
@@ -18,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -90,39 +93,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super.close();
     }
 
-    /*public List<String> getData(){
-        List<String> list = new ArrayList<>();
-        String query = "SELECT * FROM uzivatel";
-        Cursor cursor = myDataBase.rawQuery(query, null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()){
-            list.add(cursor.getString(0));
-            cursor.moveToNext();
+    public Uzivatel getUserAll(String username){
+        Uzivatel u = new Uzivatel();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT heslo FROM uzivatel WHERE prezdivka = ?", new String[] {username});
+        if (c.moveToLast()) {
+            u.setPrezdivka(c.getString(1));
+//            u.setEmail(c.getString(2));
+//            u.setHeslo(c.getString(3));
+            return u;
+        }else {
+            Log.e("error", "user can't be found or database empty");
+            return u;
         }
-        cursor.close();
-        return list;
-    }*/
+    }
 
     public Boolean checkUser(String username, String password) {
         String[] columns = {"prezdivka"};
-
         String selection = "prezdivka=? and heslo=?";
         String[] selectionArgs = {username, password};
-
         Cursor cursor = myDataBase.query("uzivatel", columns, selection, selectionArgs, null, null, null);
         int count = cursor.getCount();
-
         cursor.close();
         close();
 
         if(count > 0){
             return true;
         } else {
+            Log.d("TAG", "V databázi nejsou žádní uživatelé");
             return false;
         }
     }
 
-    public void vlozeniUzivatele(Uzivatel uzivatel) {
+    public void insertUser(Uzivatel uzivatel) {
         ContentValues values = new ContentValues();
         values.put("prezdivka", uzivatel.getPrezdivka());
         values.put("email", uzivatel.getEmail());
@@ -131,12 +134,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         myDataBase.insert("uzivatel", null, values);
     }
 
-    public void updateUzivatel(Uzivatel uzivatel, Uzivatel newUzivatel) {
+    public void updateUser(String prezdivka, Uzivatel newUzivatel) {
         ContentValues values = new ContentValues();
         values.put("prezdivka", newUzivatel.getPrezdivka());
         values.put("email", newUzivatel.getEmail());
         values.put("heslo", newUzivatel.getHeslo());
-//        values.put("prezdivka", newUzivatel.getProfilovka());
-        myDataBase.update("uzivatel", values, "prezdivka = ?", new String[]{uzivatel.getPrezdivka()});
+        values.put("profilovka", newUzivatel.getProfilovka());
+        myDataBase.update("uzivatel", values, "prezdivka = ?", new String[]{prezdivka});
     }
 }

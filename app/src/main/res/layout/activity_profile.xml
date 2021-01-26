@@ -6,16 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
-        android:layout_width="148dp"
-        android:layout_height="151dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:onClick="chooseImage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.14"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.095"
+        tools:ignore="MissingClass"
         tools:srcCompat="@tools:sample/avatars" />
 
     <EditText
@@ -70,7 +72,6 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         tools:layout_editor_absoluteX="275dp"
         tools:layout_editor_absoluteY="172dp" />
 
