@@ -2,22 +2,23 @@ package com.example.lyricsapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.lyricsapp.database.DatabaseHelper;
 
-import java.io.IOException;
-import java.util.List;
+import org.w3c.dom.Text;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText usernameLogin, passwordLogin;
@@ -29,11 +30,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        this.usernameLogin = findViewById(R.id.usernameLoginEditText);
-        this.passwordLogin = findViewById(R.id.passwordLoginEditText);
-        this.loginButton = findViewById(R.id.loginBtn);
-        this.registerLink = findViewById(R.id.registerInLoginBtn);
+        usernameLogin = findViewById(R.id.usernameLoginEditText);
+        passwordLogin = findViewById(R.id.passwordLoginEditText);
+        loginButton = findViewById(R.id.loginBtn);
+        registerLink = findViewById(R.id.registerInLoginBtn);
     }
+
 
     private Boolean validateUsername() {
         String username = usernameLogin.getText().toString();
@@ -79,8 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (exist) {
 //            Toast.makeText(LoginActivity.this, username + " " + password, Toast.LENGTH_LONG).show();
-            Intent login = new Intent(LoginActivity.this, ProfileActivity.class);
-            login.putExtra("USERNAME", username);
+            Intent login = new Intent(LoginActivity.this, SongsActivity.class);
             startActivity(login);
             usernameLogin.getText().clear();
             passwordLogin.getText().clear();

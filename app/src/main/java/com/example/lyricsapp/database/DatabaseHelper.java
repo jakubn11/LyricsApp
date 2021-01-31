@@ -5,22 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 
 
 import com.example.lyricsapp.classes.Uzivatel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -93,20 +87,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super.close();
     }
 
-    public Uzivatel getUserAll(String username){
-        Uzivatel u = new Uzivatel();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT heslo FROM uzivatel WHERE prezdivka = ?", new String[] {username});
-        if (c.moveToLast()) {
-            u.setPrezdivka(c.getString(1));
-//            u.setEmail(c.getString(2));
-//            u.setHeslo(c.getString(3));
-            return u;
-        }else {
-            Log.e("error", "user can't be found or database empty");
-            return u;
+    public Uzivatel getPassword(String username) {
+        Uzivatel uzivatel = null;
+        String sql = "SELECT heslo FROM uzivatel WHERE prezdivka="+username;
+        Cursor cursor = myDataBase.rawQuery(sql,null);
+        while (cursor.getCount() == 1) {
+            cursor.moveToFirst();
+            uzivatel = new Uzivatel();
+            uzivatel.setHeslo(cursor.getString(0));
         }
+        cursor.close();
+        return uzivatel;
     }
+
 
     public Boolean checkUser(String username, String password) {
         String[] columns = {"prezdivka"};
