@@ -6,10 +6,17 @@ public class Uzivatel {
     private String heslo;
     byte[] profilovka;
 
+    public Uzivatel(String prezdivka, String email, String heslo, byte[] profilovka) {
+        this.prezdivka = prezdivka;
+        this.email = email;
+        this.heslo = heslo;
+    }
+
     public Uzivatel(String prezdivka, String email, String heslo) {
         this.prezdivka = prezdivka;
         this.email = email;
         this.heslo = heslo;
+        this.prezdivka = prezdivka;
     }
 
     public Uzivatel() {

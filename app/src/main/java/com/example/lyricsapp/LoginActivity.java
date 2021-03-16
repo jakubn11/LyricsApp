@@ -1,27 +1,25 @@
 package com.example.lyricsapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.lyricsapp.database.DatabaseHelper;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 
-import org.w3c.dom.Text;
+public class LoginActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-public class LoginActivity extends AppCompatActivity {
-    private EditText usernameLogin, passwordLogin;
+    private TextInputLayout usernameLogin, passwordLogin;
     private Button loginButton, registerLink;
     private DatabaseHelper databaseHelper;
 
@@ -33,12 +31,13 @@ public class LoginActivity extends AppCompatActivity {
         usernameLogin = findViewById(R.id.usernameLoginEditText);
         passwordLogin = findViewById(R.id.passwordLoginEditText);
         loginButton = findViewById(R.id.loginBtn);
-        registerLink = findViewById(R.id.registerInLoginBtn);
+//        registerLink = findViewById(R.id.registerInLoginBtn);
+
     }
 
 
     private Boolean validateUsername() {
-        String username = usernameLogin.getText().toString();
+        String username = usernameLogin.getEditText().getText().toString().trim();
 
         if (username.isEmpty()) {
             usernameLogin.setError("Řádek nesmí být prázdný");
@@ -50,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private Boolean validatePassword() {
-        String password = passwordLogin.getText().toString();
+        String password = passwordLogin.getEditText().getText().toString().trim();
 
         if (password.isEmpty()) {
             passwordLogin.setError("Řádek nesmí být prázdný");
@@ -66,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(startRegister);
     }
 
+
     public void login(View v) {
         if (!validateUsername() | !validatePassword()) {
             return;
@@ -73,20 +73,29 @@ public class LoginActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.getReadableDatabase();
-        String username = usernameLogin.getText().toString();
-        String password = passwordLogin.getText().toString();
+        String username = usernameLogin.getEditText().getText().toString().trim();
+        String password = passwordLogin.getEditText().getText().toString().trim();
         databaseHelper.openDataBase();
         Boolean exist = databaseHelper.checkUser(username, password);
         databaseHelper.close();
 
         if (exist) {
-//            Toast.makeText(LoginActivity.this, username + " " + password, Toast.LENGTH_LONG).show();
-            Intent login = new Intent(LoginActivity.this, SongsActivity.class);
-            startActivity(login);
-            usernameLogin.getText().clear();
-            passwordLogin.getText().clear();
+            passwordLogin.clearFocus();
+            usernameLogin.clearFocus();
+            Intent app = new Intent(LoginActivity.this, DrawerActivity.class);
+            app.putExtra("USERNAME_FROM_LOGIN", username);
+            startActivity(app);
+            usernameLogin.getEditText().getText().clear();
+            passwordLogin.getEditText().getText().clear();
+            passwordLogin.setError(null);
         } else {
-            Toast.makeText(LoginActivity.this, "Nesprávné uživatelské jméno nebo heslo", Toast.LENGTH_LONG).show();
+            passwordLogin.setError("Nesprávné uživatelské jméno nebo heslo");
+
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
     }
 }
