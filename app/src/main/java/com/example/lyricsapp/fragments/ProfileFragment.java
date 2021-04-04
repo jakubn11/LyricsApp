@@ -1,4 +1,4 @@
-package com.example.lyricsapp;
+package com.example.lyricsapp.fragments;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,6 +24,8 @@ import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.lyricsapp.EditProfileActivity;
+import com.example.lyricsapp.R;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.google.android.material.navigation.NavigationView;
 
@@ -35,8 +37,7 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImage;
     private TextView username, email;
     private DatabaseHelper databaseHelper;
-    private String user;
-
+    private String userName, user;
 
     @Nullable
     @Override
@@ -49,35 +50,34 @@ public class ProfileFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        user = getArguments().getString("DATA_FROM_DRAWER");
+        user = getArguments().getString("USERNAME");
 
         setUserData();
         return view;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_edit, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.edit :
-                Intent editProfile = new Intent(getContext(), EditProfileActivity.class);
-                editProfile.putExtra("USERNAME_FROM_PROFILE", user);
-                startActivity(editProfile);
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.edit) {
+            Intent editProfile = new Intent(getContext(), EditProfileActivity.class);
+            editProfile.putExtra("USERNAME_FROM_PROFILE", userName);
+            startActivity(editProfile);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUserData() {
         databaseHelper.openDataBase();
         Cursor data = databaseHelper.getUserHeader(user);
         data.moveToFirst();
-        username.setText(data.getString(data.getColumnIndex("prezdivka")));
+        userName = data.getString(data.getColumnIndex("prezdivka"));
+        username.setText(userName);
         email.setText(data.getString(data.getColumnIndex("email")));
         byte[] blob2 = data.getBlob(data.getColumnIndex("profilovka"));
         databaseHelper.close();

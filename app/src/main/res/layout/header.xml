@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="180dp"
     android:id="@+id/header_menu"
-    android:background="@color/purple_200"
+    android:background="@color/blue_header"
     android:gravity="bottom"
     android:padding="20dp">
 
@@ -13,13 +14,12 @@
         android:layout_width="85dp"
         android:layout_height="85dp"
         android:layout_marginBottom="10dp"
-        android:src="@mipmap/ic_launcher_round" />
+        android:src="@drawable/profile_icon" />
 
     <TextView
         android:id="@+id/username_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="#000000"
@@ -31,7 +31,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:alpha="@dimen/material_emphasis_high_type"
-        android:text="email@gmail.com"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="#000000"

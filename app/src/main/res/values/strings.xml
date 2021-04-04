@@ -21,4 +21,31 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="hint_login_username">Uživatelské jméno</string>
+    <string name="hint_login_password">Heslo</string>
+    <string name="open_register_login">Ješte nemáte účet?</string>
+    <string name="button_login">Přihlásit se</string>
+
+    <string name="hint_register_username">Uživatelské jméno</string>
+    <string name="hint_register_password">Heslo</string>
+    <string name="hint_register_email">Email</string>
+    <string name="hint_register_confirm_password">Potvrzení hesla</string>
+    <string name="button_register">Registrovat se</string>
+
+    <string name="search_songs_title">Písně</string>
+    <string name="search_artists_title">Umělci</string>
+    <string name="search_show_all_songs">Zobrazit všechny písničky</string>
+
+    <string name="nothing_here_aritsts">V oblíbených nemáte žádné umělce</string>
+    <string name="nothing_here_songs">V oblíbených nemáte žádné písničky</string>
+
+    <string name="nothing_found_search">Omlouváme se, ale pro daný výraz nebyl nalezeny žádné skladby ani umělci</string>
+
+    <string-array name="spinner1">
+        <item>Top písničky</item>
+        <item>Top Rock</item>
+        <item>Top Counry</item>
+        <item>Top Pop</item>
+    </string-array>
 </resources>

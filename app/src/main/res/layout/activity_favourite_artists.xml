@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fav_songs_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/favouriteSongsListView"
+        android:id="@+id/favouriteArtistsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"
@@ -14,11 +15,11 @@
         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/noSongsHere"
+        android:id="@+id/noArtistsHere"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/nothing_here_songs"
+        android:text="@string/nothing_here_aritsts"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="30dp"

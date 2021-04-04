@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:background="#FF0000" />
+        android:src="@drawable/popular_songs_icon"
+        android:background="@color/grey" />
 
     </androidx.cardview.widget.CardView>
 
@@ -50,13 +51,5 @@
             android:textSize="16sp" />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/dots_item"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginLeft="5dp"
-        android:src="@drawable/icon_menu_dots" />
 
 </LinearLayout>

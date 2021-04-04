@@ -2,28 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/detail_song_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SongDetailActivity">
-
+    tools:context=".details.SongDetailActivity">
 
     <include layout="@layout/toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="14dp"
         android:layout_marginTop="?actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="56dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="130dp"
             android:layout_height="130dp"
-            android:layout_marginRight="18dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
@@ -31,8 +27,9 @@
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/purple_500"
-                android:scaleType="centerCrop" />
+                android:background="@color/grey"
+                android:scaleType="centerCrop"
+                android:src="@drawable/popular_songs_icon" />
 
         </androidx.cardview.widget.CardView>
 
@@ -42,80 +39,76 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/author_song"
-                android:layout_width="208dp"
+                android:id="@+id/name_song"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20px"
-                android:layout_marginBottom="10dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/author_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:alpha="@dimen/material_emphasis_medium"
                 android:ellipsize="end"
-                android:gravity="left"
+                android:gravity="center"
                 android:maxLines="1"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/grey" />
+
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/date_song"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginLeft="20px"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:gravity="center"-->
+            <!--                android:ellipsize="end"-->
+            <!--                android:maxLines="1"-->
+            <!--                android:text=""-->
+            <!--                android:textSize="13sp"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintHorizontal_bias="0.400"-->
+            <!--                app:layout_constraintStart_toEndOf="@+id/imageView"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/author_song"-->
+            <!--                app:layout_constraintVertical_bias="0.02" />-->
+
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/showSongsArtistDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.400"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/name_song"
-                app:layout_constraintVertical_bias="0.021" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/name_song"
-                android:layout_width="208dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20px"
-                android:layout_marginBottom="10dp"
-                android:ellipsize="end"
-                android:gravity="left"
-                android:maxLines="2"
-                android:text=""
-                android:textColor="#000000"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.400"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.103" />
-
-
-            <TextView
-                android:id="@+id/date_song"
-                android:layout_width="208dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20px"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text=""
-                android:textSize="13sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.400"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/author_song"
-                app:layout_constraintVertical_bias="0.02" />
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/text_song"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </ScrollView>
-
-        </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

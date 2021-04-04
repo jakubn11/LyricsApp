@@ -1,7 +1,9 @@
-package com.example.lyricsapp;
+package com.example.lyricsapp.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -24,32 +23,41 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.lyricsapp.classes.CustomListAdapter;
+import com.example.lyricsapp.R;
+import com.example.lyricsapp.adapters.CustomListAdapter;
 import com.example.lyricsapp.classes.Track;
 import com.example.lyricsapp.database.DatabaseHelper;
-import com.google.android.material.navigation.NavigationView;
+import com.example.lyricsapp.details.SongDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class SongsFragment extends Fragment {
+
     private DatabaseHelper databaseHelper;
     private ListView topSongsList;
     private ArrayList<Track> trackList;
-    private String user, track_name, track_author, track_id;
+    private String track_name, track_author, track_id;
+    private int userID;
     private CustomListAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_songs, container, false);
+
         databaseHelper = new DatabaseHelper(getContext());
+
+        assert getArguments() != null;
+        userID = getArguments().getInt("USER_ID");
+
         trackList = new ArrayList<>();
         topSongsList = view.findViewById(R.id.SongsListView);
+
+        setHasOptionsMenu(true);
 
         loadSongs();
 
@@ -59,7 +67,8 @@ public class SongsFragment extends Fragment {
                 Track track = adapter.getItem(position);
                 String idTrack = track.getId();
                 Intent detail = new Intent(getContext(), SongDetailActivity.class);
-                detail.putExtra("ID_FROM_SONGS", idTrack);
+                detail.putExtra("SONG_ID", idTrack);
+                detail.putExtra("USER_ID", userID);
                 startActivity(detail);
             }
         });
@@ -67,9 +76,39 @@ public class SongsFragment extends Fragment {
         return view;
     }
 
+//    private void showCustomDialog() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        builder.setMessage("Prosím připojte se k internetu pro načtení písniček")
+//                .setCancelable(false)
+//                .setPositiveButton("Připojit se", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+//            }
+//        }).setNegativeButton("Zavřít", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                startActivity(new Intent(getContext(), LoginActivity.class));
+//            }
+//        });
+//    }
+
+//    private void checkNetworkConnection() {
+//        try {
+//            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context);
+//            NetworkInfo networkInfo = null;
+//            if (connectivityManager != null) {
+//                networkInfo = connectivityManager.getActiveNetworkInfo();
+//            }
+//            return networkInfo != null && networkInfo.isConnected();
+//        } catch (NullPointerException e) {
+//            return false;
+//        }
+//    }
+
     private void loadSongs() {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "https://api.musixmatch.com/ws/1.1/track.search?format=json&s_track_rating=desc&f_has_lyrics=1&quorum_factor=0%2C9&page=10&apikey=24a77db4314e8422a65a8d369612e7f1";
+        String url = "https://api.musixmatch.com/ws/1.1/chart.tracks.get?format=json&page=1&page_size=10&country=XW%20&f_has_lyrics=1&apikey=24a77db4314e8422a65a8d369612e7f1";
         ProgressDialog dialog = ProgressDialog.show(getContext(), null, "Prosím počkejte");
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -86,7 +125,7 @@ public class SongsFragment extends Fragment {
                         track_author = track.getString("artist_name");
                         trackList.add(new Track(track_id, track_name, track_author, R.mipmap.ic_launcher));
                     }
-                    adapter = new CustomListAdapter(getContext(), R.layout.my_list_item, trackList);
+                    adapter = new CustomListAdapter(getContext(), R.layout.my_list_item_song, trackList);
                     topSongsList.setAdapter(adapter);
                     dialog.dismiss();
 
@@ -106,5 +145,6 @@ public class SongsFragment extends Fragment {
             }
         });
         queue.add(request);
+
     }
 }

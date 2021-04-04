@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/profile_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,13 +18,12 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_profile"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="50dp"
-                android:src="@mipmap/ic_launcher_round"
-                tools:ignore="MissingClass"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:src="@drawable/profile_icon"
+                tools:ignore="MissingClass" />
 
             <TextView
                 android:id="@+id/textView"
@@ -38,10 +36,10 @@
 
             <TextView
                 android:id="@+id/username_profile"
-                android:layout_width="155dp"
-                android:layout_height="23dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:alpha="@dimen/material_emphasis_medium"
-                android:text="TEST USERNAME"
+                android:text=""
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -71,10 +69,10 @@
 
             <TextView
                 android:id="@+id/email_profile"
-                android:layout_width="155dp"
-                android:layout_height="23dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:alpha="@dimen/material_emphasis_medium"
-                android:text="TEST email"
+                android:text=""
                 android:textColor="#000000"
                 android:textSize="16sp" />
 

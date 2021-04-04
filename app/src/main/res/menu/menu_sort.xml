@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="@layout/toolbar">
+
+    <item
+        android:id="@+id/sortSongDESC"
+        android:title="Seřadit písničky sestupně" />
+
+    <item
+        android:id="@+id/sortSongABC"
+        android:title="Seřadit písničy vzestupně" />
+
+    <item
+        android:id="@+id/sortArtistDESC"
+        android:title="Seřadit umělce sestupně" />
+
+    <item
+        android:id="@+id/sortArtistABC"
+        android:title="Seřadit umělce vzestupně" />
+
+<!--    <item-->
+<!--        android:id="@+id/searchFav"-->
+<!--        android:icon="@drawable/search_icon"-->
+<!--        android:title="Hledat"-->
+<!--        app:actionViewClass="androidx.appcompat.widget.SearchView"-->
+<!--        app:showAsAction="collapseActionView|always" />-->
+</menu>

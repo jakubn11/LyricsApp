@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.lyricsapp.classes.AESCrypt;
 import com.example.lyricsapp.classes.Uzivatel;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,13 +34,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
     private ImageView profileImage;
     private TextInputLayout profileUsername, profilePassword, profilePasswordConfirm, profileEmail;
     private DatabaseHelper databaseHelper;
-    private String user;
-    private Toolbar toolbar;
+    private String hashPass, user;
+    private int userId;
     int SELECT_PHOTO = 1;
     Uri uri;
     String path;
@@ -55,39 +57,37 @@ public class EditProfileActivity extends AppCompatActivity {
         profileEmail = findViewById(R.id.profileEmailEdit);
         profilePassword = findViewById(R.id.profilePasswordEdit);
         profilePasswordConfirm = findViewById(R.id.profilePasswordConfirm);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         databaseHelper = new DatabaseHelper(this);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Úprava profilu");
 
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         user = extras.getString("USERNAME_FROM_PROFILE");
-
         databaseHelper.openDataBase();
         Cursor data = databaseHelper.getUserHeader(user);
         data.moveToFirst();
 
-        profileUsername.getEditText().setText(data.getString(data.getColumnIndex("prezdivka")));
-        profileEmail.getEditText().setText(data.getString(data.getColumnIndex("email")));
-        profilePassword.getEditText().setText(data.getString(data.getColumnIndex("heslo")));
-        byte[] blob = data.getBlob(data.getColumnIndex("profilovka"));
-        if (blob == null) {
-            Log.i("PROFILE PHOTO","V databázi není pro tento účet profilová fotka");
-        } else {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(blob);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            profileImage.setImageBitmap(bitmap);
-        }
+        Objects.requireNonNull(profileUsername.getEditText()).setText(data.getString(data.getColumnIndex("prezdivka")));
+        Objects.requireNonNull(profileEmail.getEditText()).setText(data.getString(data.getColumnIndex("email")));
+//        byte[] blob = data.getBlob(data.getColumnIndex("profilovka"));
         databaseHelper.close();
+//        if (blob == null) {
+//            Log.i("PROFILE PHOTO","V databázi není pro tento účet profilová fotka");
+//        } else {
+//            ByteArrayInputStream inputStream = new ByteArrayInputStream(blob);
+//            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+//            profileImage.setImageBitmap(bitmap);
+//        }
     }
 
     private Boolean validateUsername() {
-        String username = profileUsername.getEditText().getText().toString().trim();
+        String username = Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim();
 
         if (username.isEmpty()) {
             profileUsername.setError("Řádek nesmí být prázdný");
@@ -105,7 +105,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private Boolean validatePassword() {
-        String password = profilePassword.getEditText().getText().toString().trim();
+        String password = Objects.requireNonNull(profilePassword.getEditText()).getText().toString().trim();
 
         String passwordValidation = "^" +
 //                "(?=.*[0-9])" +              //at least 1 digit
@@ -133,7 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private Boolean validateConfirmPassword() {
-        String confirmPassword = profilePasswordConfirm.getEditText().getText().toString().trim();
+        String confirmPassword = Objects.requireNonNull(profilePasswordConfirm.getEditText()).getText().toString().trim();
         String password = profilePasswordConfirm.getEditText().getText().toString().trim();
 
         if (confirmPassword.isEmpty()) {
@@ -149,7 +149,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private Boolean validateEmail() {
-        String email = profileEmail.getEditText().getText().toString().trim();
+        String email = Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim();
         String emailValidation = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
         if (email.isEmpty()) {
@@ -169,19 +169,27 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
+        AESCrypt crypt = new AESCrypt();
+        String pass = Objects.requireNonNull(profilePassword.getEditText()).getText().toString().trim();
+        try {
+            hashPass = AESCrypt.encrypt(pass);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         databaseHelper.getWritableDatabase();
         Uzivatel newUzivatel = new Uzivatel();
         if (f == null) {
-            newUzivatel.setPrezdivka(profileUsername.getEditText().getText().toString().trim());
-            newUzivatel.setEmail(profileEmail.getEditText().getText().toString().trim());
-            newUzivatel.setHeslo(profilePassword.getEditText().getText().toString().trim());
+            newUzivatel.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
+            newUzivatel.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
+            newUzivatel.setHeslo(hashPass);
             databaseHelper.openDataBase();
             databaseHelper.updateUserWithoutProfileImage(user, newUzivatel);
             databaseHelper.close();
         } else {
-            newUzivatel.setPrezdivka(profileUsername.getEditText().getText().toString().trim());
-            newUzivatel.setEmail(profileEmail.getEditText().getText().toString().trim());
-            newUzivatel.setHeslo(profilePassword.getEditText().getText().toString().trim());
+            newUzivatel.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
+            newUzivatel.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
+            newUzivatel.setHeslo(hashPass);
             newUzivatel.setProfilovka(imageViewToByte(profileImage));
             databaseHelper.openDataBase();
             databaseHelper.updateUserWithProfileImage(user, newUzivatel);
@@ -196,7 +204,7 @@ public class EditProfileActivity extends AppCompatActivity {
         profileUsername.getEditText().getText().clear();
         profileEmail.getEditText().getText().clear();
         profilePassword.getEditText().getText().clear();
-        profilePasswordConfirm.getEditText().getText().clear();
+        Objects.requireNonNull(profilePasswordConfirm.getEditText()).getText().clear();
         profileImage.setImageDrawable(null);
     }
 
@@ -204,8 +212,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
+        return stream.toByteArray();
     }
 
     public void chooseImage(View v) {
@@ -228,8 +235,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 profileImage.setImageBitmap(bitmap);
                 Toast.makeText(this, "Profilová fotka vybrána", Toast.LENGTH_SHORT).show();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

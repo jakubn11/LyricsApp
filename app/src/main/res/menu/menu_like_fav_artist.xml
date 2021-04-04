@@ -5,8 +5,15 @@
     tools:context="@layout/toolbar">
 
     <item
-        android:id="@+id/like"
+        android:id="@+id/like_fav_artist"
         android:icon="@drawable/like_icon_empty"
+        android:title="Like"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/like_full_fav_artist"
+        android:icon="@drawable/favourite_songs_icon"
         android:title="Like"
         app:showAsAction="always" />
 

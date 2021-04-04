@@ -1,27 +1,42 @@
 package com.example.lyricsapp.classes;
 
 public class Artist {
-    private String artist_id;
-    private String artist_name;
+    private String idArtist;
+    private String artistName;
+    private String timeStamp;
 
-    public Artist(String artist_id, String artist_name) {
-        this.artist_id = artist_id;
-        this.artist_name = artist_name;
+    public Artist(String idArtist, String artistName) {
+        this.idArtist = idArtist;
+        this.artistName = artistName;
     }
 
-    public String getArtist_id() {
-        return artist_id;
+    public Artist(String idArtist, String artistName, String timeStamp) {
+        this.idArtist = idArtist;
+        this.artistName = artistName;
+        this.timeStamp = timeStamp;
     }
 
-    public String getArtist_name() {
-        return artist_name;
+    public String getIdArtist() {
+        return idArtist;
     }
 
-    public void setArtist_id(String artist_id) {
-        this.artist_id = artist_id;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setArtist_name(String artist_name) {
-        this.artist_name = artist_name;
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setIdArtist(String idArtist) {
+        this.idArtist = idArtist;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

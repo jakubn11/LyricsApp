@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="@layout/toolbar">
+
+    <item
+        android:id="@+id/like_song"
+        android:icon="@drawable/like_icon_empty"
+        android:title="Like"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/like_full_song"
+        android:icon="@drawable/favourite_songs_icon"
+        android:title="Like"
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/show_artist"
+        android:title="Přejít na tohoto umělce" />
+
+</menu>

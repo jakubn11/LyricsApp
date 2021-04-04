@@ -1,4 +1,4 @@
-package com.example.lyricsapp.classes;
+package com.example.lyricsapp.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.lyricsapp.R;
+import com.example.lyricsapp.classes.Artist;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class CustomListAdapterArtist extends ArrayAdapter<Artist> {
     private int resorce;
     private List<Artist> artistList;
     private TextView artistName, authorName;
+    private ImageView cover;
 
     public CustomListAdapterArtist(Context myContext, int resource, List<Artist> artistList) {
         super(myContext, resource, artistList);
@@ -38,7 +40,7 @@ public class CustomListAdapterArtist extends ArrayAdapter<Artist> {
 
         Artist artist = artistList.get(position);
 
-        artistName.setText(artist.getArtist_name());
+        artistName.setText(artist.getArtistName());
 
         return view;
     }

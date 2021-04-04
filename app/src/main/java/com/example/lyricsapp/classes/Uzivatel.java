@@ -1,6 +1,7 @@
 package com.example.lyricsapp.classes;
 
 public class Uzivatel {
+    private int id;
     private String prezdivka;
     private String email;
     private String heslo;
@@ -20,6 +21,14 @@ public class Uzivatel {
     }
 
     public Uzivatel() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getPrezdivka() {

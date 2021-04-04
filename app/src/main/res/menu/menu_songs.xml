@@ -5,10 +5,9 @@
     tools:context="@layout/toolbar">
 
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/search_icon"
-        android:title="Hledat"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        android:id="@+id/refresh"
+        android:title="Obnovit"
+        android:icon="@drawable/refresh_icon"
+        app:showAsAction="ifRoom"/>
 
 </menu>

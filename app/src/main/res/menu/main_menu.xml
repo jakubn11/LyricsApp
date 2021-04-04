@@ -6,35 +6,38 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_all_songs"
-            android:icon="@drawable/home_icon"
-            android:title="Top 10 písniček" />
-        <item
             android:id="@+id/nav_fav_songs"
             android:icon="@drawable/favourite_songs_icon"
             android:title="Oblíbené písničky" />
+
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/profile_icon"
-            android:title="Profil" />
+            android:id="@+id/nav_fav_artists"
+            android:icon="@drawable/favourite_artist_icon"
+            android:title="Oblíbení umělci" />
+
+        <item
+            android:id="@+id/nav_all_songs"
+            android:icon="@drawable/popular_songs_icon"
+            android:title="Top 10 písniček" />
+
         <item
             android:id="@+id/nav_search"
             android:icon="@drawable/search_icon"
-            android:title="Vyhledávání"
-            android:checked="false" />
+            android:title="Vyhledávání" />
 
     </group>
     <item android:title="Další">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/nav_settings"
-                    android:icon="@drawable/settings_icon"
-                    android:title="Nastavení" />
+                    android:id="@+id/nav_profile"
+                    android:icon="@drawable/profile_icon"
+                    android:title="Profil" />
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/logout_icon"
-                    android:title="Odhlásit se" />
+                    android:title="Odhlásit se"
+                    android:checked="false"/>
             </group>
         </menu>
     </item>
