@@ -3,8 +3,9 @@ package com.example.lyricsapp.details;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.app.FragmentManager;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,11 +22,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.lyricsapp.R;
 import com.example.lyricsapp.database.DatabaseHelper;
+import com.example.lyricsapp.fragments.FavSongsFragment;
+import com.example.lyricsapp.fragments.SearchFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SongDetailActivity extends AppCompatActivity {
+public class FavSongDetailActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView name, author, text;
@@ -56,6 +59,9 @@ public class SongDetailActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         idSong = extras.getString("SONG_ID");
         userID = extras.getInt("USER_ID");
+        fav_songs = extras.getString("FAV_SONGS_FRAGMENT");
+        Log.i("USER ID", String.valueOf(userID));
+        Log.i("SONG_ID", String.valueOf(idSong));
 
         loadSongInfo();
         loadLyrics();
@@ -176,20 +182,11 @@ public class SongDetailActivity extends AppCompatActivity {
         databaseHelper.close();
     }
 
-    @Override
-    public void onBackPressed() {
-
-        super.onBackPressed();
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
-
-        String text = "fav_songs";
-        if (fav_songs == text) {
-            Log.i("JMENO", "nameFramgnt");
-        }
+        FavSongsFragment favSongsFragment = new FavSongsFragment();
+        favSongsFragment.onStart();
         return true;
     }
 }

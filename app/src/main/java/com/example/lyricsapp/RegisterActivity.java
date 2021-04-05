@@ -103,24 +103,24 @@ public class RegisterActivity extends AppCompatActivity {
     private Boolean validatePassword() {
         String password = passwordRegister.getEditText().getText().toString().trim();
 
-        String passwordValidation = "^" +
-//                "(?=.*[0-9])" +              //at least 1 digit
-//                "(?=.*[a-z])" +              //at least 1 lower case letter
-//                "(?=.*[A-Z])" +              //at least 1 upper case letter
-                "(?=.*[a-zA-Z])" +           //any letter
-                "(?=.*[@#$%^&+=])" +         //at least 1 special character
-                "(?=\\S+$)" +                //no white spaces
-                ".{8,}" +                    //at least 4 characters
-                "$";
+//        String passwordValidation = "^" +
+////                "(?=.*[0-9])" +              //at least 1 digit
+////                "(?=.*[a-z])" +              //at least 1 lower case letter
+////                "(?=.*[A-Z])" +              //at least 1 upper case letter
+//                "(?=.*[a-zA-Z])" +             //any letter
+//                "(?=.*[@#$%^&+=_.?!|/*;])" +      //at least 1 special character
+//                "(?=\\S+$)" +                  //no white spaces
+//                ".{8,}" +                      //at least 4 characters
+//                "$";
 
         if (password.isEmpty()) {
             passwordRegister.setError("Řádek nesmí být prázdný");
             return false;
-        } else if (!password.matches(passwordValidation)) {
-            passwordRegister.setError("Heslo je příliš slabé");
-            return false;
         } else if (password.contains(" ")) {
             passwordRegister.setError("Heslo musí být bez mezer");
+            return false;
+        } else if (password.length() < 8) {
+            passwordRegister.setError("Minimální délka hesla je 8 znaků");
             return false;
         } else {
             passwordRegister.setError(null);

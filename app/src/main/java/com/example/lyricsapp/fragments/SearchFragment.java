@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +61,7 @@ public class SearchFragment extends Fragment {
     private LinearLayout searchLayout;
     private CustomListAdapter adapter;
     private CustomListAdapterArtist adapterArtist;
-    private SearchView scrollViewSearch;
+    private ScrollView scrollViewSearch;
 
     @Nullable
     @Override
@@ -159,6 +160,7 @@ public class SearchFragment extends Fragment {
 
                 searchSong(query);
                 searchArtist(query);
+                scrollViewSearch.fullScroll(View.FOCUS_UP);
                 searchLayout.setVisibility(View.VISIBLE);
                 searchView.clearFocus();
 

@@ -24,7 +24,7 @@
 
     <string name="hint_login_username">Uživatelské jméno</string>
     <string name="hint_login_password">Heslo</string>
-    <string name="open_register_login">Ješte nemáte účet?</string>
+    <string name="open_register_login">Ještě nemáte účet?</string>
     <string name="button_login">Přihlásit se</string>
 
     <string name="hint_register_username">Uživatelské jméno</string>
