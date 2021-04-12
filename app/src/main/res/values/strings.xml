@@ -40,7 +40,14 @@
     <string name="nothing_here_aritsts">V oblíbených nemáte žádné umělce</string>
     <string name="nothing_here_songs">V oblíbených nemáte žádné písničky</string>
 
-    <string name="nothing_found_search">Omlouváme se, ale pro daný výraz nebyl nalezeny žádné skladby ani umělci</string>
+    <string name="nothing_found">Omlouváme se, ale pro daný výraz nebyli nalezeny žádné výsledky</string>
+    <string name="nothing_found_songs">Omlouváme se, ale pro daný výraz nebyl nalezeny žádné skladby</string>
+    <string name="nothing_found_artists">Omlouváme se, ale pro daný výraz nebyl nalezeny žádní umělci</string>
+
+    <string name="search_hint">Hledejte své oblíbené umělce nebo skladby</string>
+
+    <string name="no_internet_header">Připojení ztraceno</string>
+    <string name="no_internet_text">Jste offline zkontrolujte prosím vaše internetové připojení a zkuste to znovu</string>
 
     <string-array name="spinner1">
         <item>Top písničky</item>

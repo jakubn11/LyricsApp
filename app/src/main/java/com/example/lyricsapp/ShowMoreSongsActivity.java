@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ public class ShowMoreSongsActivity extends AppCompatActivity {
     private String track_name;
     private String track_author;
     private CustomListAdapter adapter;
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,21 @@ public class ShowMoreSongsActivity extends AppCompatActivity {
                 startActivity(detail);
             }
         });
+
+//        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+//
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//
+//            }
+//
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//
+//                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
+//                    showMoreSongs(data, 2);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -73,11 +91,10 @@ public class ShowMoreSongsActivity extends AppCompatActivity {
         return true;
     }
 
-    public void showMoreSongs(String text) {
+    public void showMoreSongs(String song) {
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        String url = "https://api.musixmatch.com/ws/1.1/track.search?format=json&q_artist=" + text + "&f_has_lyrics=1&s_track_rating=desc&quorum_factor=1&apikey=24a77db4314e8422a65a8d369612e7f1";
+        String url = "https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track=" + song + "&f_has_lyrics=1&s_track_rating=desc&quorum_factor=1&apikey=24a77db4314e8422a65a8d369612e7f1";
         searchListTrack = new ArrayList<>();
-//        ProgressDialog dialog = ProgressDialog.show(getApplicationContext(), null, "Prosím počkejte");
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -96,7 +113,6 @@ public class ShowMoreSongsActivity extends AppCompatActivity {
                     }
                     adapter = new CustomListAdapter(getApplicationContext(), R.layout.my_list_item_song, searchListTrack);
                     listView.setAdapter(adapter);
-//                    dialog.dismiss();
 
                     if (searchListTrack.isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Nejsou zde žádné písničky", Toast.LENGTH_LONG).show();

@@ -60,7 +60,6 @@ public class FavSongsFragment extends Fragment {
         displaySongsInReverseOrder();
         reverseSongs();
 
-
         favouriteSongsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -84,12 +83,10 @@ public class FavSongsFragment extends Fragment {
                 return o1.getNazevPisnicky().compareTo(o2.getNazevPisnicky());
             }
         });
-//        adapter.notifyDataSetChanged();
     }
 
     private void reverseSongs() {
         Collections.reverse(trackList);
-//        adapter.notifyDataSetChanged();
     }
 
     private void displaySongsInReverseOrder() {
@@ -109,7 +106,7 @@ public class FavSongsFragment extends Fragment {
             nothingHere.setVisibility(View.VISIBLE);
         } else {
             while (songs.moveToNext()) {
-                String track_id = songs.getString(songs.getColumnIndex("id_oblibene"));
+                String track_id = songs.getString(songs.getColumnIndex("id_pisnicky"));
                 String nazevPisnicky = songs.getString(songs.getColumnIndex("nazev_pisnicky"));
                 String jmenoAutora = songs.getString(songs.getColumnIndex("jmeno_interpreta"));
                 String timeStamp = songs.getString(songs.getColumnIndex("timeStamp"));

@@ -26,6 +26,7 @@ import com.example.lyricsapp.classes.Artist;
 import com.example.lyricsapp.adapters.CustomListAdapterArtist;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.example.lyricsapp.details.ArtistDetailActivity;
+import com.example.lyricsapp.details.FavArtistDetailActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +65,7 @@ public class FavArtistsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Artist artist = adapter.getItem(position);
                 String idArtist = artist.getIdArtist();
-                Intent detail = new Intent(getContext(), ArtistDetailActivity.class);
+                Intent detail = new Intent(getContext(), FavArtistDetailActivity.class);
                 detail.putExtra("ARTIST_ID", idArtist);
                 detail.putExtra("USER_ID", userID);
                 startActivity(detail);

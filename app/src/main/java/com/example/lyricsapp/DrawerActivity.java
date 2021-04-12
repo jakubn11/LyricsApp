@@ -2,7 +2,6 @@ package com.example.lyricsapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -12,7 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -20,10 +19,10 @@ import android.database.CursorWindow;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,7 +31,6 @@ import com.example.lyricsapp.fragments.FavArtistsFragment;
 import com.example.lyricsapp.fragments.FavSongsFragment;
 import com.example.lyricsapp.fragments.ProfileFragment;
 import com.example.lyricsapp.fragments.SearchFragment;
-import com.example.lyricsapp.fragments.SettingsFragment;
 import com.example.lyricsapp.fragments.SongsFragment;
 import com.google.android.material.navigation.NavigationView;
 
@@ -86,6 +84,14 @@ public class DrawerActivity extends AppCompatActivity {
         TextView userUsernameHeader = headerLayout.findViewById(R.id.username_header);
         TextView userEmailHeader = headerLayout.findViewById(R.id.email_header);
 
+        navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                logout();
+                return true;
+            }
+        });
+
         databaseHelper.openDataBase();
         Cursor data = databaseHelper.getUserHeader(usernameLogin);
         data.moveToFirst();
@@ -105,33 +111,43 @@ public class DrawerActivity extends AppCompatActivity {
             userImageHeader.setImageBitmap(bitmap);
         }
 
+        hideKeyboard(this);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Find our drawer view
         mDrawer = findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
 
-        // Setup toggle to display hamburger icon with nice animation
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerToggle.syncState();
 
-        // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.addDrawerListener(drawerToggle);
 
 
-        FavSongsFragment favSongsFragment = new FavSongsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("USERNAME", usernameLogin);
-        bundle.putInt("USER_ID", userID);
-        favSongsFragment.setArguments(bundle);
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.flContent, favSongsFragment);
-        tx.commit();
+//        FavSongsFragment favSongsFragment = new FavSongsFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("USERNAME", usernameLogin);
+//        bundle.putInt("USER_ID", userID);
+//        favSongsFragment.setArguments(bundle);
+//        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+//        tx.replace(R.id.flContent, favSongsFragment);
+//        tx.commit();
 
         navigationView.getMenu().getItem(0).setChecked(true);
         toolbar.setTitle(navigationView.getMenu().getItem(0).getTitle());
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null) {
+            if (activity.getCurrentFocus() != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity
+                        .INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+                        .getWindowToken(), 0);
+            }
+        }
     }
 
     @Override
@@ -175,79 +191,23 @@ public class DrawerActivity extends AppCompatActivity {
         switch (menuItem.getItemId()) {
             case R.id.nav_fav_songs:
                 fragmentClass = FavSongsFragment.class;
+                hideKeyboard(this);
                 break;
-//                FavSongsFragment favSongsFragment = new FavSongsFragment();
-//                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("USERNAME", usernameLogin);
-//                bundle.putInt("USER_ID", userID);
-//                favSongsFragment.setArguments(bundle);
-//                fragmentTransaction.add(R.id.flContent, fragment);
-//                fragmentTransaction.commit();
-//                break;
             case R.id.nav_fav_artists:
                 fragmentClass = FavArtistsFragment.class;
+                hideKeyboard(this);
                 break;
-//                FavArtistsFragment favArtistsFragment = new FavArtistsFragment();
-//                FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
-//                Bundle bundle2 = new Bundle();
-//                bundle2.putString("USERNAME", usernameLogin);
-//                bundle2.putInt("USER_ID", userID);
-//                favArtistsFragment.setArguments(bundle2);
-//                fragmentTransaction2.add(R.id.flContent, fragment);
-//                fragmentTransaction2.commit();
-//                break;
             case R.id.nav_all_songs:
                 fragmentClass = SongsFragment.class;
+                hideKeyboard(this);
                 break;
-//                SongsFragment songsFragment = new SongsFragment();
-//                FragmentTransaction fragmentTransaction3 = getSupportFragmentManager().beginTransaction();
-//                Bundle bundle3 = new Bundle();
-//                bundle3.putString("USERNAME", usernameLogin);
-//                bundle3.putInt("USER_ID", userID);
-//                songsFragment.setArguments(bundle3);
-//                fragmentTransaction3.add(R.id.flContent, fragment);
-//                fragmentTransaction3.commit();
-//                break;
             case R.id.nav_profile:
                 fragmentClass = ProfileFragment.class;
+                hideKeyboard(this);
                 break;
-//                ProfileFragment profileFragment = new ProfileFragment();
-//                FragmentTransaction fragmentTransaction4 = getSupportFragmentManager().beginTransaction();
-//                Bundle bundle4 = new Bundle();
-//                bundle4.putString("USERNAME", usernameLogin);
-//                bundle4.putInt("USER_ID", userID);
-//                profileFragment.setArguments(bundle4);
-//                fragmentTransaction4.add(R.id.flContent, fragment);
-//                fragmentTransaction4.commit();
-//                break;
             case R.id.nav_search:
                 fragmentClass = SearchFragment.class;
-                break;
-//                SearchFragment searchFragment = new SearchFragment();
-//                FragmentTransaction fragmentTransaction5 = getSupportFragmentManager().beginTransaction();
-//                Bundle bundle5 = new Bundle();
-//                bundle5.putString("USERNAME", usernameLogin);
-//                bundle5.putInt("USER_ID", userID);
-//                searchFragment.setArguments(bundle5);
-//                fragmentTransaction5.add(R.id.flContent, fragment);
-//                fragmentTransaction5.commit();
-//                break;
-            case R.id.nav_logout:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-//                builder.setMessage("Prosím připojte se k internetu pro načtení písniček")
-//                        .setCancelable(false)
-//                        .setPositiveButton("Připojit se", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-//                            }
-//                        }).setNegativeButton("Zavřít", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-//                    }
-//                });
+                hideKeyboard(this);
                 break;
             default:
                 fragmentClass = FavSongsFragment.class;
@@ -274,6 +234,9 @@ public class DrawerActivity extends AppCompatActivity {
 
     private void logout() {
         Intent logout = new Intent(getApplicationContext(), LoginActivity.class);
+        logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(logout);
         finish();
     }
@@ -282,6 +245,7 @@ public class DrawerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
         if (item.getItemId() == android.R.id.home) {
+            hideKeyboard(this);
             mDrawer.openDrawer(GravityCompat.START);
             return true;
         }

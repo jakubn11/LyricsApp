@@ -3,15 +3,17 @@ package com.example.lyricsapp.details;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -21,12 +23,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.lyricsapp.R;
+import com.example.lyricsapp.adapters.CustomListAdapter;
+import com.example.lyricsapp.classes.Track;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.example.lyricsapp.fragments.FavSongsFragment;
 import com.example.lyricsapp.fragments.SearchFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class FavSongDetailActivity extends AppCompatActivity {
 
@@ -37,6 +43,7 @@ public class FavSongDetailActivity extends AppCompatActivity {
     private MenuItem likeEmpty, likeFull, showArtist;
     private Menu menu;
     private int userID;
+    private Cursor result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,73 +66,25 @@ public class FavSongDetailActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         idSong = extras.getString("SONG_ID");
         userID = extras.getInt("USER_ID");
-        fav_songs = extras.getString("FAV_SONGS_FRAGMENT");
-        Log.i("USER ID", String.valueOf(userID));
-        Log.i("SONG_ID", String.valueOf(idSong));
 
         loadSongInfo();
-        loadLyrics();
     }
 
     private void loadSongInfo() {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        String url = "https://api.musixmatch.com/ws/1.1/track.get?format=json&track_id=" + idSong + "&apikey=24a77db4314e8422a65a8d369612e7f1";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject message = response.getJSONObject("message");
-                    JSONObject body = message.getJSONObject("body");
-                    JSONObject track = body.getJSONObject("track");
-                    track_id = track.getString("track_id");
-                    track_name = track.getString("track_name");
-                    artist_name = track.getString("artist_name");
-                    artist_id = track.getString("artist_id");
+        databaseHelper.openDataBase();
+        Cursor songs = databaseHelper.getFavSongDetail(idSong);
+        while (songs.moveToNext()) {
+            track_id = songs.getString(songs.getColumnIndex("id_pisnicky"));
+            track_name = songs.getString(songs.getColumnIndex("nazev_pisnicky"));
+            artist_name = songs.getString(songs.getColumnIndex("jmeno_interpreta"));
+            artist_id = songs.getString(songs.getColumnIndex("id_interpreta"));
+            lyrics_body = songs.getString(songs.getColumnIndex("text"));
 
-                    checkSong(track_id, userID);
-
-                    name.setText(track_name);
-                    author.setText(artist_name);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e("LOG_TAG", e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("ERROR", error.toString());
-            }
-        });
-        queue.add(request);
-    }
-
-    private void loadLyrics() {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        String url2 = "https://api.musixmatch.com/ws/1.1/track.lyrics.get?format=json&track_id=" + idSong + "&apikey=24a77db4314e8422a65a8d369612e7f1";
-        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject message = response.getJSONObject("message");
-                    JSONObject body = message.getJSONObject("body");
-                    JSONObject lyrics = body.getJSONObject("lyrics");
-                    lyrics_body = lyrics.getString("lyrics_body");
-
-
-                    text.setText(lyrics_body);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e("LOG_TAG", e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("ERROR", error.toString());
-            }
-        });
-        queue.add(request2);
+            name.setText(track_name);
+            author.setText(artist_name);
+            text.setText(lyrics_body);
+        }
+        databaseHelper.close();
     }
 
     @Override
@@ -136,6 +95,8 @@ public class FavSongDetailActivity extends AppCompatActivity {
         likeFull = menu.findItem(R.id.like_full_song);
         showArtist = menu.findItem(R.id.show_artist);
         this.menu = menu;
+
+        checkSong();
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -148,14 +109,14 @@ public class FavSongDetailActivity extends AppCompatActivity {
             menu.getItem(1).setVisible(true);
             menu.getItem(0).setVisible(false);
             databaseHelper.openDataBase();
-            databaseHelper.insertSong(idSong, track_name, artist_name, userID, lyrics_body);
+            databaseHelper.insertSong(track_id, track_name, artist_name, artist_id, userID, lyrics_body);
             databaseHelper.close();
             return true;
         } else if (id == R.id.like_full_song) {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
             databaseHelper.openDataBase();
-            databaseHelper.deleteFavSong(idSong);
+            databaseHelper.deleteFavSong(track_id, userID);
             databaseHelper.close();
             return true;
         } else if (id == R.id.show_artist) {
@@ -168,9 +129,9 @@ public class FavSongDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void checkSong(String songId, int idUser) {
+    private void checkSong() {
         databaseHelper.openDataBase();
-        Cursor result = databaseHelper.getSong(songId, idUser);
+        result = databaseHelper.getSong(idSong, userID);
 
         if (result.getCount() == 0) {
             likeEmpty.setVisible(true);
@@ -182,11 +143,19 @@ public class FavSongDetailActivity extends AppCompatActivity {
         databaseHelper.close();
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.flContent, fragment);
+//        fragmentTransaction.addToBackStack(fragment.toString());
+//        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//        fragmentTransaction.commit();
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
-        FavSongsFragment favSongsFragment = new FavSongsFragment();
-        favSongsFragment.onStart();
+        onBackPressed();
         return true;
     }
 }

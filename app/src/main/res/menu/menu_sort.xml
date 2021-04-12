@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/sortSongABC"
-        android:title="Seřadit písničy vzestupně" />
+        android:title="Seřadit písničky vzestupně" />
 
     <item
         android:id="@+id/sortArtistDESC"

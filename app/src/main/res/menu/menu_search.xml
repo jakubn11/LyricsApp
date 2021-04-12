@@ -9,6 +9,6 @@
         android:icon="@drawable/search_icon"
         android:title="Hledat"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        app:showAsAction="always" />
 
 </menu>

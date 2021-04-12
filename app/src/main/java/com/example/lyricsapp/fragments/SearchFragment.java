@@ -1,29 +1,45 @@
 package com.example.lyricsapp.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -55,13 +71,15 @@ public class SearchFragment extends Fragment {
     private ArrayList<Artist> searchListArtist;
     private String track_id, track_name, track_author, data, artist_id, artist_name, textChangedQuery;
     private SearchView searchView;
-    private TextView textSongsListView, textArtistListView, showMoreSongs, showMoreArtists;
+    private TextView textSongsListView, textArtistListView, showMoreSongs, showMoreArtists, hintSearch, nothingFound;
     private Timer timer;
     private int userID;
-    private LinearLayout searchLayout;
+    private LinearLayout searchLayout, searchLinearLayoutSongs, searchLinearLayoutArtists;
     private CustomListAdapter adapter;
     private CustomListAdapterArtist adapterArtist;
     private ScrollView scrollViewSearch;
+    private ImageView searchIconView;
+    private Toolbar toolbar;
 
     @Nullable
     @Override
@@ -76,13 +94,26 @@ public class SearchFragment extends Fragment {
         textSongsListView = view.findViewById(R.id.textSongsListView);
         textArtistListView = view.findViewById(R.id.textArtistListView);
         scrollViewSearch = view.findViewById(R.id.scrollViewSearch);
+        searchLinearLayoutSongs = view.findViewById(R.id.searchLinearLayoutSongs);
+        searchLinearLayoutArtists = view.findViewById(R.id.searchLinearLayoutArtists);
+        hintSearch = view.findViewById(R.id.hintSearch);
+        nothingFound = view.findViewById(R.id.nothingFound);
+        toolbar = view.findViewById(R.id.toolbar);
 
         setHasOptionsMenu(true);
+
+//        checkConnection();
 
         Bundle bundle = getArguments();
         userID = bundle.getInt("USER_ID");
 
-        searchLayout.setVisibility(View.INVISIBLE);
+//        scrollViewSearch.setOnClickListener(this);
+//        scrollViewSearch.getViewTreeObserver().addOnScrollChangedListener(this);
+
+        nothingFound.setVisibility(View.GONE);
+        searchLinearLayoutSongs.setVisibility(View.GONE);
+        searchLinearLayoutArtists.setVisibility(View.GONE);
+        hintSearch.setVisibility(View.VISIBLE);
 
         showMoreSongs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +169,10 @@ public class SearchFragment extends Fragment {
         MenuItem searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) searchItem.getActionView();
 
+        searchView.setIconifiedByDefault(false);
+        searchView.setFocusable(true);
+        searchView.setIconified(false);
+
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -146,7 +181,16 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                searchLayout.setVisibility(View.INVISIBLE);
+                searchLinearLayoutSongs.setVisibility(View.GONE);
+                searchLinearLayoutArtists.setVisibility(View.GONE);
+                hintSearch.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
                 return true;
             }
         });
@@ -154,35 +198,77 @@ public class SearchFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                hintSearch.setVisibility(View.GONE);
+
                 if (query.contains(" ")) {
                     query = query.replace(" ", "%");
                 }
 
-                searchSong(query);
-                searchArtist(query);
-                scrollViewSearch.fullScroll(View.FOCUS_UP);
-                searchLayout.setVisibility(View.VISIBLE);
-                searchView.clearFocus();
+                ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
+                try {
+                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                        searchSong(query);
+                        searchArtist(query);
+
+                        if (searchListTrack.isEmpty() & searchListArtist.isEmpty()) {
+                            nothingFound.setVisibility(View.VISIBLE);
+                        }
+                    } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                        searchSong(query);
+                        searchArtist(query);
+
+                        if (searchListTrack.isEmpty() & searchListArtist.isEmpty()) {
+                            nothingFound.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } catch (Exception e) {
+                    String finalQuery = query;
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Žádné připojení")
+                            .setMessage("Jste offline zkontrolujte prosím své internetové připojení")
+                            .setPositiveButton("Zkusit znovu", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    onQueryTextSubmit(finalQuery);
+                                }
+                            })
+                            .setNegativeButton("Zavřít", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //  Action for 'NO' Button
+                                    dialog.cancel();
+                                }
+                            }).show();
+                }
+
+                scrollViewSearch.fullScroll(View.FOCUS_UP);
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                if (newText.isEmpty()) {
+                    searchLinearLayoutSongs.setVisibility(View.GONE);
+                    searchLinearLayoutArtists.setVisibility(View.GONE);
+                    nothingFound.setVisibility(View.GONE);
+                    hintSearch.setVisibility(View.VISIBLE);
+                }
+                return true;
             }
         });
 
         searchView.findViewById(androidx.appcompat.R.id.search_plate).setBackgroundColor(Color.TRANSPARENT);
         searchView.setQueryHint("Hledat");
-        searchView.setIconifiedByDefault(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void searchSong(String song) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track=" + song + "&f_has_lyrics=1&s_track_rating=desc&quorum_factor=1 &page_size=4&page=1&apikey=24a77db4314e8422a65a8d369612e7f1";
+        String url = "https://api.musixmatch.com/ws/1.1/track.search?format=json&q_track=" + song + "&f_has_lyrics=1&s_track_rating=desc&quorum_factor=1&page_size=4&page=1&apikey=24a77db4314e8422a65a8d369612e7f1";
         searchListTrack = new ArrayList<>();
+        nothingFound.setVisibility(View.GONE);
         ProgressDialog dialog = ProgressDialog.show(getContext(), null, "Prosím počkejte");
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -205,7 +291,10 @@ public class SearchFragment extends Fragment {
                     dialog.dismiss();
 
                     if (searchListTrack.isEmpty()) {
-                        searchLayout.setVisibility(View.INVISIBLE);
+                        searchLinearLayoutSongs.setVisibility(View.GONE);
+                    } else {
+                        nothingFound.setVisibility(View.GONE);
+                        searchLinearLayoutSongs.setVisibility(View.VISIBLE);
                     }
 
                 } catch (JSONException e) {
@@ -226,6 +315,7 @@ public class SearchFragment extends Fragment {
         RequestQueue queue2 = Volley.newRequestQueue(getContext());
         String url2 = "https://api.musixmatch.com/ws/1.1/artist.search?format=json&q_artist=" + artist + "&page=1&page_size=4&apikey=24a77db4314e8422a65a8d369612e7f1";
         searchListArtist = new ArrayList<>();
+        nothingFound.setVisibility(View.GONE);
         ProgressDialog dialog = ProgressDialog.show(getContext(), null, "Prosím počkejte");
         JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
             @Override
@@ -247,7 +337,10 @@ public class SearchFragment extends Fragment {
                     dialog.dismiss();
 
                     if (searchListArtist.isEmpty()) {
-                        searchLayout.setVisibility(View.INVISIBLE);
+                        searchLinearLayoutArtists.setVisibility(View.GONE);
+                    } else {
+                        nothingFound.setVisibility(View.GONE);
+                        searchLinearLayoutArtists.setVisibility(View.VISIBLE);
                     }
 
                 } catch (JSONException e) {

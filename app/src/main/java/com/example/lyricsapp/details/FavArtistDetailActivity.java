@@ -5,9 +5,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.app.ProgressDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,10 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,10 +41,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ArtistDetailActivity extends AppCompatActivity {
+public class FavArtistDetailActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private String artistID, artist_id, artist_name, track_id, track_name, track_author, album_name;
+    private String artistID, artist_id, artist_name, track_id, track_name, album_name;
     private ArrayList<Track> ListTrack;
     private TextView artistName;
     private ListView popularSongs;
@@ -81,6 +80,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
         userID = extras.getInt("USER_ID");
         Log.i("USER ID", String.valueOf(userID));
 
+        loadArtistInfo(artistID);
+
         checkConnection();
 
         popularSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -102,10 +103,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
 
         try {
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                loadArtistInfo(artistID);
                 loadSongListView(artistID);
             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
-                loadArtistInfo(artistID);
                 loadSongListView(artistID);
             }
         } catch (Exception e) {
@@ -130,33 +129,15 @@ public class ArtistDetailActivity extends AppCompatActivity {
     }
 
     private void loadArtistInfo(String id) {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        String url = "https://api.musixmatch.com/ws/1.1/artist.get?format=json&artist_id=" + id + "&apikey=24a77db4314e8422a65a8d369612e7f1";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject message = response.getJSONObject("message");
-                    JSONObject body = message.getJSONObject("body");
-                    JSONObject artist = body.getJSONObject("artist");
-                    artist_id = artist.getString("artist_id");
-                    artist_name = artist.getString("artist_name");
+        databaseHelper.openDataBase();
+        Cursor songs = databaseHelper.getFavArtistDetail(id);
+        while (songs.moveToNext()) {
+            artist_id = songs.getString(songs.getColumnIndex("id_autora"));
+            artist_name = songs.getString(songs.getColumnIndex("jmeno_autora"));
 
-                    checkArtist(artist_id, userID);
-
-                    artistName.setText(artist_name);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e("LOG_TAG", e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("ERROR", error.toString());
-            }
-        });
-        queue.add(request);
+            artistName.setText(artist_name);
+        }
+        databaseHelper.close();
     }
 
     private void loadSongListView(String id) {
@@ -182,7 +163,7 @@ public class ArtistDetailActivity extends AppCompatActivity {
                     popularSongs.setAdapter(adapter);
 
                     if (ListTrack.isEmpty()) {
-                        showSongs.setVisibility(View.GONE);
+                        showSongs.setVisibility(View.INVISIBLE);
                     }
 
                 } catch (JSONException e) {
@@ -199,9 +180,9 @@ public class ArtistDetailActivity extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void checkArtist(String id, int idUser) {
+    private void checkArtist() {
         databaseHelper.openDataBase();
-        Cursor result = databaseHelper.getArtist(id, idUser);
+        Cursor result = databaseHelper.getArtist(artistID, userID);
 
         if (result.getCount() == 0) {
             likeEmpty.setVisible(true);
@@ -220,6 +201,8 @@ public class ArtistDetailActivity extends AppCompatActivity {
         likeEmpty = menu.findItem(R.id.like_artist);
         likeFull = menu.findItem(R.id.like_full_artist);
         this.menu = menu;
+
+        checkArtist();
 
         return super.onCreateOptionsMenu(menu);
     }

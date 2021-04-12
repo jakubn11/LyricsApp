@@ -1,26 +1,26 @@
 package com.example.lyricsapp.classes;
 
-public class Uzivatel {
+public class User {
     private int id;
     private String prezdivka;
     private String email;
     private String heslo;
     byte[] profilovka;
 
-    public Uzivatel(String prezdivka, String email, String heslo, byte[] profilovka) {
+    public User(String prezdivka, String email, String heslo, byte[] profilovka) {
         this.prezdivka = prezdivka;
         this.email = email;
         this.heslo = heslo;
     }
 
-    public Uzivatel(String prezdivka, String email, String heslo) {
+    public User(String prezdivka, String email, String heslo) {
         this.prezdivka = prezdivka;
         this.email = email;
         this.heslo = heslo;
         this.prezdivka = prezdivka;
     }
 
-    public Uzivatel() {
+    public User() {
     }
 
     public int getId() {

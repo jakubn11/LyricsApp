@@ -8,20 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 
-import com.example.lyricsapp.classes.Track;
-import com.example.lyricsapp.classes.Uzivatel;
+import com.example.lyricsapp.classes.User;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 
@@ -96,16 +90,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super.close();
     }
 
-    public Cursor getFavouriteSongs(int id) {
+    public Cursor getFavouriteSongs(int idUser) {
         myDataBase = this.getReadableDatabase();
-        String query = "SELECT * FROM oblibene_pisnicky WHERE TRIM(uzivatel_id) = '"+id+"'";
+        String query = "SELECT * FROM oblibene_pisnicky WHERE TRIM(id_uzivatel) = '"+idUser+"'";
         Cursor data = myDataBase.rawQuery(query, null);
         return data;
     }
 
-    public Cursor getFavouriteArtists(int id) {
+    public Cursor getFavouriteArtists(int idUser) {
         myDataBase = this.getReadableDatabase();
-        String query = "SELECT * FROM oblibeni_autori WHERE TRIM(uzivatel_id) = '"+id+"'";
+        String query = "SELECT * FROM oblibeni_autori WHERE TRIM(id_uzivatel) = '"+idUser+"'";
         Cursor data = myDataBase.rawQuery(query, null);
         return data;
     }
@@ -133,14 +127,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getArtist(String idArtist, int idUser) {
         myDataBase = this.getReadableDatabase();
-        String query = "SELECT * FROM oblibeni_autori WHERE TRIM(id_autora) = '"+idArtist.trim()+"' AND TRIM(uzivatel_id) = '"+idUser+"'";
+        String query = "SELECT * FROM oblibeni_autori WHERE TRIM(id_autora) = '"+idArtist.trim()+"' AND TRIM(id_uzivatel) = '"+idUser+"'";
         Cursor data = myDataBase.rawQuery(query, null);
         return data;
     }
 
     public Cursor getSong (String idSong, int idUser) {
         myDataBase = this.getReadableDatabase();
-        String query = "SELECT * FROM oblibene_pisnicky WHERE TRIM(id_oblibene) = '"+idSong.trim()+"' AND TRIM(uzivatel_id) = '"+idUser+"'";
+        String query = "SELECT * FROM oblibene_pisnicky WHERE TRIM(id_pisnicky) = '"+idSong.trim()+"' AND TRIM(id_uzivatel) = '"+idUser+"'";
+        Cursor data = myDataBase.rawQuery(query, null);
+        return data;
+    }
+
+    public Cursor getFavSongDetail (String idSong) {
+        myDataBase = this.getReadableDatabase();
+        String query = "SELECT * FROM oblibene_pisnicky WHERE TRIM(id_pisnicky) = '"+idSong.trim()+"'";
+        Cursor data = myDataBase.rawQuery(query, null);
+        return data;
+    }
+
+    public Cursor getFavArtistDetail (String idArtist) {
+        myDataBase = this.getReadableDatabase();
+        String query = "SELECT * FROM oblibeni_autori WHERE TRIM(id_autora) = '"+idArtist.trim()+"'";
         Cursor data = myDataBase.rawQuery(query, null);
         return data;
     }
@@ -162,48 +170,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void insertUserWithProfileImage(Uzivatel uzivatel) {
+    public void insertUserWithProfileImage(User user) {
         ContentValues values = new ContentValues();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        values.put("prezdivka", uzivatel.getPrezdivka());
-        values.put("email", uzivatel.getEmail());
-        values.put("profilovka", uzivatel.getProfilovka());
-        values.put("heslo", uzivatel.getHeslo());
+        values.put("prezdivka", user.getPrezdivka());
+        values.put("email", user.getEmail());
+        values.put("profilovka", user.getProfilovka());
+        values.put("heslo", user.getHeslo());
         values.put("timeStamp", formatter.format(date));
         myDataBase.insert("uzivatel", null, values);
     }
 
-    public void insertUserWithoutProfileImage(Uzivatel uzivatel) {
+    public void insertUserWithoutProfileImage(User user) {
         ContentValues values = new ContentValues();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        values.put("prezdivka", uzivatel.getPrezdivka());
-        values.put("email", uzivatel.getEmail());
-        values.put("heslo", uzivatel.getHeslo());
+        values.put("prezdivka", user.getPrezdivka());
+        values.put("email", user.getEmail());
+        values.put("heslo", user.getHeslo());
         values.put("timeStamp", formatter.format(date));
         myDataBase.insert("uzivatel", null, values);
     }
 
-    public void insertSong(String id_track, String name_song, String artist_name, int id_user, String text) {
+    public void insertSong(String id_track, String name_song, String artist_name, String artist_id, int id_user, String text) {
         ContentValues values = new ContentValues();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        values.put("id_oblibene", id_track);
+        values.put("id_pisnicky", id_track);
         values.put("nazev_pisnicky", name_song);
         values.put("jmeno_interpreta", artist_name);
-        values.put("uzivatel_id", id_user);
+        values.put("id_interpreta", artist_id);
+        values.put("id_uzivatel", id_user);
         values.put("text", text);
         values.put("timeStamp", formatter.format(date));
         myDataBase.insert("oblibene_pisnicky", null, values);
     }
 
-    public void deleteFavSong(String id_track) {
-        myDataBase.delete("oblibene_pisnicky", "id_oblibene = ?", new String[]{id_track});
+    public void deleteFavSong(String id_track, int id_user) {
+        myDataBase.delete("oblibene_pisnicky", "id_pisnicky = ? AND id_uzivatel = ?", new String[]{id_track, String.valueOf(id_user)});
     }
 
-    public void deleteFavArtist(String id_artist) {
-        myDataBase.delete("oblibeni_autori", "id_autora = ?", new String[]{id_artist});
+    public void deleteFavArtist(String id_artist, int id_user) {
+        myDataBase.delete("oblibeni_autori", "id_autora = ? AND id_uzivatel = ?", new String[]{id_artist, String.valueOf(id_user)});
     }
 
     public void insertArtist(String id_artist, String artist_name, int id_user) {
@@ -212,30 +221,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Date date = new Date();
         values.put("id_autora", id_artist);
         values.put("jmeno_autora", artist_name);
-        values.put("uzivatel_id", id_user);
+        values.put("id_uzivatel", id_user);
         values.put("timeStamp", formatter.format(date));
         myDataBase.insert("oblibeni_autori", null, values);
     }
 
-    public void updateUserWithProfileImage(String prezdivka, Uzivatel newUzivatel) {
+    public void updateUserWithProfileImage(String prezdivka, User newUser) {
         ContentValues values = new ContentValues();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        values.put("prezdivka", newUzivatel.getPrezdivka());
-        values.put("email", newUzivatel.getEmail());
-        values.put("heslo", newUzivatel.getHeslo());
-        values.put("profilovka", newUzivatel.getProfilovka());
+        values.put("prezdivka", newUser.getPrezdivka());
+        values.put("email", newUser.getEmail());
+        values.put("heslo", newUser.getHeslo());
+        values.put("profilovka", newUser.getProfilovka());
         values.put("timeStamp", formatter.format(date));
         myDataBase.update("uzivatel", values, "prezdivka = ?", new String[]{prezdivka});
     }
 
-    public void updateUserWithoutProfileImage(String prezdivka, Uzivatel newUzivatel) {
+    public void updateUserWithoutProfileImage(String prezdivka, User newUser) {
         ContentValues values = new ContentValues();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
-        values.put("prezdivka", newUzivatel.getPrezdivka());
-        values.put("email", newUzivatel.getEmail());
-        values.put("heslo", newUzivatel.getHeslo());
+        values.put("prezdivka", newUser.getPrezdivka());
+        values.put("email", newUser.getEmail());
+        values.put("heslo", newUser.getHeslo());
         values.put("timeStamp", formatter.format(date));
         myDataBase.update("uzivatel", values, "prezdivka = ?", new String[]{prezdivka});
     }

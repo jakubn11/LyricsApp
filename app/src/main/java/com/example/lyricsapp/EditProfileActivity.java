@@ -2,9 +2,7 @@ package com.example.lyricsapp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,25 +12,18 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.lyricsapp.classes.AESCrypt;
-import com.example.lyricsapp.classes.Uzivatel;
+import com.example.lyricsapp.classes.User;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
@@ -75,15 +66,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Objects.requireNonNull(profileUsername.getEditText()).setText(data.getString(data.getColumnIndex("prezdivka")));
         Objects.requireNonNull(profileEmail.getEditText()).setText(data.getString(data.getColumnIndex("email")));
-//        byte[] blob = data.getBlob(data.getColumnIndex("profilovka"));
         databaseHelper.close();
-//        if (blob == null) {
-//            Log.i("PROFILE PHOTO","V databázi není pro tento účet profilová fotka");
-//        } else {
-//            ByteArrayInputStream inputStream = new ByteArrayInputStream(blob);
-//            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-//            profileImage.setImageBitmap(bitmap);
-//        }
     }
 
     private Boolean validateUsername() {
@@ -178,21 +161,21 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         databaseHelper.getWritableDatabase();
-        Uzivatel newUzivatel = new Uzivatel();
+        User newUser = new User();
         if (f == null) {
-            newUzivatel.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
-            newUzivatel.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
-            newUzivatel.setHeslo(hashPass);
+            newUser.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
+            newUser.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
+            newUser.setHeslo(hashPass);
             databaseHelper.openDataBase();
-            databaseHelper.updateUserWithoutProfileImage(user, newUzivatel);
+            databaseHelper.updateUserWithoutProfileImage(user, newUser);
             databaseHelper.close();
         } else {
-            newUzivatel.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
-            newUzivatel.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
-            newUzivatel.setHeslo(hashPass);
-            newUzivatel.setProfilovka(imageViewToByte(profileImage));
+            newUser.setPrezdivka(Objects.requireNonNull(profileUsername.getEditText()).getText().toString().trim());
+            newUser.setEmail(Objects.requireNonNull(profileEmail.getEditText()).getText().toString().trim());
+            newUser.setHeslo(hashPass);
+            newUser.setProfilovka(imageViewToByte(profileImage));
             databaseHelper.openDataBase();
-            databaseHelper.updateUserWithProfileImage(user, newUzivatel);
+            databaseHelper.updateUserWithProfileImage(user, newUser);
             databaseHelper.close();
         }
         Intent logout = new Intent(getApplicationContext(), LoginActivity.class)

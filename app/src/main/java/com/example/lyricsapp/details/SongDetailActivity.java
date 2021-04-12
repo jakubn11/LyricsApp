@@ -142,14 +142,14 @@ public class SongDetailActivity extends AppCompatActivity {
             menu.getItem(1).setVisible(true);
             menu.getItem(0).setVisible(false);
             databaseHelper.openDataBase();
-            databaseHelper.insertSong(idSong, track_name, artist_name, userID, lyrics_body);
+            databaseHelper.insertSong(idSong, track_name, artist_name, artist_id, userID, lyrics_body);
             databaseHelper.close();
             return true;
         } else if (id == R.id.like_full_song) {
             menu.getItem(0).setVisible(true);
             menu.getItem(1).setVisible(false);
             databaseHelper.openDataBase();
-            databaseHelper.deleteFavSong(idSong);
+            databaseHelper.deleteFavSong(idSong, userID);
             databaseHelper.close();
             return true;
         } else if (id == R.id.show_artist) {
@@ -177,19 +177,8 @@ public class SongDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-
-        super.onBackPressed();
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
-
-        String text = "fav_songs";
-        if (fav_songs == text) {
-            Log.i("JMENO", "nameFramgnt");
-        }
         return true;
     }
 }

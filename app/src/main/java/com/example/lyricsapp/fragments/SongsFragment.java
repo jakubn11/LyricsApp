@@ -1,10 +1,15 @@
 package com.example.lyricsapp.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +20,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,6 +31,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.lyricsapp.LoginActivity;
 import com.example.lyricsapp.R;
 import com.example.lyricsapp.adapters.CustomListAdapter;
 import com.example.lyricsapp.classes.Track;
@@ -44,6 +53,7 @@ public class SongsFragment extends Fragment {
     private int userID;
     private CustomListAdapter adapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,7 +69,7 @@ public class SongsFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        loadSongs();
+        checkConnection();
 
         topSongsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,35 +86,37 @@ public class SongsFragment extends Fragment {
         return view;
     }
 
-//    private void showCustomDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        builder.setMessage("Prosím připojte se k internetu pro načtení písniček")
-//                .setCancelable(false)
-//                .setPositiveButton("Připojit se", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-//            }
-//        }).setNegativeButton("Zavřít", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                startActivity(new Intent(getContext(), LoginActivity.class));
-//            }
-//        });
-//    }
+    private void checkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
-//    private void checkNetworkConnection() {
-//        try {
-//            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context);
-//            NetworkInfo networkInfo = null;
-//            if (connectivityManager != null) {
-//                networkInfo = connectivityManager.getActiveNetworkInfo();
-//            }
-//            return networkInfo != null && networkInfo.isConnected();
-//        } catch (NullPointerException e) {
-//            return false;
-//        }
-//    }
+        try {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                loadSongs();
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                loadSongs();
+            }
+        } catch (Exception e) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Žádné připojení")
+                    .setMessage("Jste offline zkontrolujte prosím své internetové připojení")
+                    .setPositiveButton("Zkusit znovu", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.flContent);
+                            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                            fragmentTransaction.detach(currentFragment);
+                            fragmentTransaction.attach(currentFragment);
+                            fragmentTransaction.commit();
+                        }
+                    }).setNegativeButton("Zavřít", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //  Action for 'NO' Button
+                    dialog.cancel();
+                }
+            }).show();
+        }
+    }
 
     private void loadSongs() {
         RequestQueue queue = Volley.newRequestQueue(getContext());

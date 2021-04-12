@@ -74,9 +74,8 @@ public class ShowMoreArtistsActivity extends AppCompatActivity {
 
     public void showMoreArtists(String artist) {
         RequestQueue queue2 = Volley.newRequestQueue(getApplicationContext());
-        String url2 = "https://api.musixmatch.com/ws/1.1/artist.search?format=json&q_artist=" + artist + "&page=1&page_size=4&apikey=24a77db4314e8422a65a8d369612e7f1";
+        String url2 = "https://api.musixmatch.com/ws/1.1/artist.search?format=json&q_artist=" + artist + "&page=1&page_size=10&apikey=24a77db4314e8422a65a8d369612e7f1";
         searchListArtist = new ArrayList<>();
-//        ProgressDialog dialog = ProgressDialog.show(getApplicationContext(), null, "Prosím počkejte");
         JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -93,7 +92,6 @@ public class ShowMoreArtistsActivity extends AppCompatActivity {
                     }
                     adapter = new CustomListAdapterArtist(getApplicationContext(), R.layout.my_list_item_artist, searchListArtist);
                     listView.setAdapter(adapter);
-//                    dialog.dismiss();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

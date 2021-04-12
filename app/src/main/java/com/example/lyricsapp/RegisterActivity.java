@@ -1,4 +1,4 @@
-package com.example.lyricsapp;
+    package com.example.lyricsapp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 
 import com.example.lyricsapp.classes.AESCrypt;
-import com.example.lyricsapp.classes.Uzivatel;
+import com.example.lyricsapp.classes.User;
 import com.example.lyricsapp.database.DatabaseHelper;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -190,21 +190,21 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         databaseHelper.getWritableDatabase();
-        Uzivatel newUzivatel = new Uzivatel();
+        User newUser = new User();
         if (f == null) {
-            newUzivatel.setPrezdivka(Objects.requireNonNull(usernameRegister.getEditText()).getText().toString().trim());
-            newUzivatel.setEmail(Objects.requireNonNull(emailRegister.getEditText()).getText().toString().trim());
-            newUzivatel.setHeslo(hashPass);
+            newUser.setPrezdivka(Objects.requireNonNull(usernameRegister.getEditText()).getText().toString().trim());
+            newUser.setEmail(Objects.requireNonNull(emailRegister.getEditText()).getText().toString().trim());
+            newUser.setHeslo(hashPass);
             databaseHelper.openDataBase();
-            databaseHelper.insertUserWithoutProfileImage(newUzivatel);
+            databaseHelper.insertUserWithoutProfileImage(newUser);
             databaseHelper.close();
         } else {
-            newUzivatel.setPrezdivka(Objects.requireNonNull(usernameRegister.getEditText()).getText().toString().trim());
-            newUzivatel.setEmail(Objects.requireNonNull(emailRegister.getEditText()).getText().toString().trim());
-            newUzivatel.setProfilovka(imageViewToByte(imageView));
-            newUzivatel.setHeslo(hashPass);
+            newUser.setPrezdivka(Objects.requireNonNull(usernameRegister.getEditText()).getText().toString().trim());
+            newUser.setEmail(Objects.requireNonNull(emailRegister.getEditText()).getText().toString().trim());
+            newUser.setProfilovka(imageViewToByte(imageView));
+            newUser.setHeslo(hashPass);
             databaseHelper.openDataBase();
-            databaseHelper.insertUserWithProfileImage(newUzivatel);
+            databaseHelper.insertUserWithProfileImage(newUser);
             databaseHelper.close();
         }
         Toast.makeText(RegisterActivity.this, "Účet byl vytvořen", Toast.LENGTH_LONG).show();
